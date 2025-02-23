@@ -1,23 +1,18 @@
 spring:
   cache:
     infinispan:
-      remote:
-        server-list: "localhost:11222"  # Adres serwera
-        username: "admin"               # Uwierzytelnianie
-        password: "admin"               # Uwierzytelnianie
-        connect-timeout: 5000           # Czas oczekiwania na po??czenie
-        socket-timeout: 10000
-      caches:
-        ip:
-          ttl: 5000 # 5 sekund
-        name:
-          ttl: 10000 # 5 sekund
-        surname:
-          ttl: 5000 # 5 sekund
-        regon:
-          ttl: 5000 # 5 sekund
-      limits:
-        ip: 10
-        name: 10
-        surname: 10
-        regon: 100
+      caches: IP, NAME, SURNAME, REGON
+
+limits:
+  IP:
+    ttl: 5000 # 5 sekund
+    attempts: 10
+  NAME:
+    ttl: 10000
+    attempts: 5
+  SURNAME:
+    ttl: 5000
+    attempts: 10
+  REGON:
+    ttl: 500
+    attempts: 10

@@ -1,6 +1,7 @@
 package com.rsjava.limiting.config;
 
 
+import com.rsjava.limiting.enums.Limits.Limit;
 import org.infinispan.configuration.cache.ConfigurationBuilder;
 import org.infinispan.manager.DefaultCacheManager;
 import org.infinispan.spring.embedded.provider.SpringEmbeddedCacheManager;
@@ -15,43 +16,32 @@ import org.springframework.context.annotation.Configuration;
 
 public class CacheConfig {
 
-    @Value("${spring.cache.infinispan.caches.ip.ttl}")
+    @Value("${limits.IP.ttl}")
     private long ipTtl;
 
-    @Value("${spring.cache.infinispan.caches.name.ttl}")
+    @Value("${limits.NAME.ttl}")
     private long nameTtl;
 
-    @Value("${spring.cache.infinispan.caches.surname.ttl}")
+    @Value("${limits.SURNAME.ttl}")
     private long surnameTtl;
 
-    @Value("${spring.cache.infinispan.caches.regon.ttl}")
+    @Value("${limits.REGON.ttl}")
     private long regonTtl;
 
     @Bean
     public CacheManager cacheManager() {
         DefaultCacheManager defaultCacheManager = new DefaultCacheManager();
-
-        org.infinispan.configuration.cache.Configuration ipCacheConfig = new ConfigurationBuilder()
-                .expiration().lifespan(ipTtl)
-                .build();
-
-        org.infinispan.configuration.cache.Configuration nameCacheConfig = new ConfigurationBuilder()
-                .expiration().lifespan(nameTtl)
-                .build();
-
-        org.infinispan.configuration.cache.Configuration surnameCacheConfig = new ConfigurationBuilder()
-                .expiration().lifespan(surnameTtl)
-                .build();
-
-        org.infinispan.configuration.cache.Configuration regonCacheConfig = new ConfigurationBuilder()
-                .expiration().lifespan(regonTtl)
-                .build();
-
-        defaultCacheManager.defineConfiguration("id", ipCacheConfig);
-        defaultCacheManager.defineConfiguration("name", nameCacheConfig);
-        defaultCacheManager.defineConfiguration("surname", surnameCacheConfig);
-        defaultCacheManager.defineConfiguration("regon", regonCacheConfig);
+        defaultCacheManager.defineConfiguration(Limit.IP.name(), getConfiguration(ipTtl));
+        defaultCacheManager.defineConfiguration(Limit.NAME.name(), getConfiguration(nameTtl));
+        defaultCacheManager.defineConfiguration(Limit.SURNAME.name(), getConfiguration(surnameTtl));
+        defaultCacheManager.defineConfiguration(Limit.REGON.name(), getConfiguration(regonTtl));
 
         return new SpringEmbeddedCacheManager(defaultCacheManager);
+    }
+
+    private org.infinispan.configuration.cache.Configuration getConfiguration(long ttl) {
+        return new ConfigurationBuilder()
+                .expiration().lifespan(ttl)
+                .build();
     }
 }
